@@ -1,0 +1,107 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'teachers/bootstrap.css' %}">
+{% load custom_filters %}
+
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/js/bootstrap.bundle.min.js" integrity="sha384-/mhDoLbDldZc3qpsJHpLogda//BVZbgYuw6kof4u2FrCedxOtgRZDTHgHUhOCVim" crossorigin="anonymous"></script>
+    <title>Teachers DB</title>
+</head>
+
+<header>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Teacher DB</a>
+            <div class="d-flex">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/summary">Summary</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/admin">Admin</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/about">About</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<body>
+<div class="">
+    <div class="card m-5">
+        <div class="card-header">
+            <ul class="breadcrumb m-2 ">
+                <li class="breadcrumb-item"><a href="/" style="text-decoration: none">主页</a></li>
+                <li class="breadcrumb-item"><a href="/proj" style="text-decoration: none">项目</a></li>
+                <li class="breadcrumb-item active" aria-current="page">项目详情</li>
+            </ul>
+        </div>
+        <div class="card-body">
+            <ul class="list-group">
+                <h2 class="m-1">{{ project.name }}</h2>
+                <li class="list-group-item">
+                    <b>来源：</b>
+                    {{ project.source }}
+                </li>
+                <li class="list-group-item">
+                    <b>类型：</b>
+                    {{ project.type|project_type_to_string }}
+                </li>
+                <li class="list-group-item">
+                    <b>总经费：</b>
+                    {{ project.funds }}
+                </li>
+                <li class="list-group-item">
+                    <b>开始年份：</b>
+                    {{ project.startYear }}
+                </li>
+                <li class="list-group-item">
+                    <b>结束年份：</b>
+                    {{ project.endYear }}
+                </li>
+            </ul>
+            <ul class="list-group mt-3">
+                <li class="list-group-item">
+                    <b>承担人列表</b>
+                    <a href="/ld/create" class="btn btn-sm btn-primary">添加项目关系</a>
+                </li>
+                {% if project.leading_set.all %}
+                    {% for leadership in project.leading_set.all %}
+                        <li class="list-group-item">
+                            <a href="/tea/{{ leadership.leader.tea_id }}" style="text-decoration: none">{{ leadership.leader.name }}
+                            </a>
+
+                              经费：<b>{{ leadership.fund }} </b>
+                            {% if leadership.rank == 1 %}
+                                <span class="badge text-bg-primary">项目负责人</span>
+                            {% endif %}
+                            <a href= "{% url 'teachers:leading_update' leadership.leader.tea_id leadership.project.proj_id %}" class="btn btn-sm btn-outline-primary">更新</a>
+                            <a href= "{% url 'teachers:leading_delete' leadership.leader.tea_id leadership.project.proj_id %}" class="btn btn-sm btn-outline-danger">删除</a>
+
+                        </li>
+                    {% endfor %}
+                {% else %}
+                     <p>没有对应的作者。</p>
+                {% endif %}
+            </ul>
+        </div>
+
+
+        <div class="card-footer">
+            <div>
+                <a href="/proj/{{ project.proj_id }}/update" class="btn btn-primary">修改</a>
+            <a href="/proj/{{ project.proj_id }}/delete" class="btn btn-outline-danger">删除</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+
+</html>
